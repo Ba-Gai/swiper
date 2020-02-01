@@ -1,12 +1,14 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 # 因为需要的是json数据，所以不需上面的render，直接导入JsonResponse
-from django.http import JsonResponse
+
+# from django.http import JsonResponse
+
 from django.core.cache import cache
 
 from common import keys
 from common import status
 from user import logics
-
+from libs.http import render_json
 # 获取短信验证码
 from user.models import User
 
@@ -17,9 +19,9 @@ def get_vcode(request):
     # 逻辑写道logics里面
     # logics调用send_vcode方法
     if logics.send_vcode(phonenum):
-        return JsonResponse({'code': status.OK, 'data': None})
+        return render_json()
     else:
-        return JsonResponse({'code': status.SMSErr , 'data': 'SMSErr'})
+        return render_json(code=status.SMSErr , data='SMSErr')
 
 # 检查验证码，并进行登录注册
 def check_vcode(request):
@@ -29,7 +31,7 @@ def check_vcode(request):
     cached_vcode = cache.get(keys.VCODE_KEY % phonenum)
     # 判断验证码是否过期
     if cached_vcode is None:
-        return JsonResponse({'code': status.VcodeExpired, 'data': 'VcodeExpired'})
+        return render_json(code=status.VcodeExpired, data='VcodeExpired')
     # 检查验证码是否一致
     if cached_vcode == vcode:
         # 获取或创建对象
@@ -41,6 +43,6 @@ def check_vcode(request):
         # 使用session记录登录状态
         request.session['uid'] = user.id
         # 将用户信息发送给前端
-        return JsonResponse({'code': 0, 'data': user.to_dict()})
+        return render_json(data= user.to_dict())
     else:
-        return JsonResponse({'code': status.VcodeErr, 'data': 'VcodeErr'})
+        return render_json(code=status.VcodeErr, data='VcodeErr')
