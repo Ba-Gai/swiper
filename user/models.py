@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 
+
 # Create your models here.
 
 class User(models.Model):
@@ -27,3 +28,15 @@ class User(models.Model):
     birthday = models.DateField(default=datetime.date(1996, 5, 20), verbose_name='出生日')
     avatar = models.CharField(max_length=256, verbose_name='个人形象')
     location = models.CharField(max_length=16, choices=LOCATION, verbose_name='常居地')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'phonenum': self.phonenum,
+            'nickname': self.nickname,
+            'sex': self.sex,
+            # date数据类型不能被json序列化,所以给强转成字符串
+            'birthday': str(self.birthday),
+            'avatar': self.avatar,
+            'location': self.location,
+        }

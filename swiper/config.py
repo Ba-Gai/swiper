@@ -17,7 +17,7 @@ YZX_PARAMS = {
     'sid': 'd4ae2ed11b3658e3ecc70948c0851c6d',
     'token': '057aff6f139**********7aa6dec492e',
     'appid': '771fe3ac275943f7924c1ef365fdbd09',
-    'templateid': '485814',
+    'templateid': '485815',
     'param': None,
     'mobile': None,
 }
