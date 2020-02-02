@@ -9,6 +9,7 @@ from common import keys
 from common import status
 from user import logics
 from libs.http import render_json
+from libs.orm import model_to_dict
 
 from user.models import User
 
@@ -51,8 +52,9 @@ def check_vcode(request):
 
 # 1. 获取交友资料接口
 def get_profile(request):
-    user = request.user
-    return render_json(user.to_dict())
+    # 自定义的中间件里面  request.user  <---->  User.objects.get(id=uid)
+    profile = request.user.profile
+    return render_json(model_to_dict(profile))
 
 
 # 2. 修改个人、交友资料接口

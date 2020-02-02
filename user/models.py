@@ -29,6 +29,17 @@ class User(models.Model):
     avatar = models.CharField(max_length=256, verbose_name='个人形象')
     location = models.CharField(max_length=16, choices=LOCATION, verbose_name='常居地')
 
+    # 返回个人资料(不使用外键关联的方式，完成user和profile一对一对应关系)
+    @property  # @property将类里面的函数设置为属性，调用时可以不用加括号
+    def profile(self):
+        # 每次从数据库中取数据都要消耗时间（比如：profile.dating_sex），所以将profile暂存到self中
+        # 判断self中是否有profile属性
+        if not hasattr(self, '_profile'):
+            # 单下划线是指供内部使用
+            self._profile, _ = Profile.objects.get_or_create(id=self.id)
+        return self._profile
+
+    # 返回json数据
     def to_dict(self):
         return {
             'id': self.id,
@@ -53,6 +64,6 @@ class Profile(models.Model):
     min_dating_age = models.IntegerField(default=18, verbose_name='最小交友年龄')
     max_dating_age = models.IntegerField(default=50, verbose_name='最大交友年龄')
 
-    vibration = models.BooleanField(verbose_name='是否开启震动')
-    only_matche = models.BooleanField(verbose_name='不让为匹配的人看我的相册')
-    auto_play = models.BooleanField(verbose_name='是否自动播放视频')
+    vibration = models.BooleanField(default=True, verbose_name='是否开启震动')
+    only_matche = models.BooleanField(default=True, verbose_name='不让为匹配的人看我的相册')
+    auto_play = models.BooleanField(default=True, verbose_name='是否自动播放视频')
