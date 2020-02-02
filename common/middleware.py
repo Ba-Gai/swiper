@@ -20,20 +20,20 @@ def timer(func):
 
 
 class AuthMiddleware(MiddlewareMixin):
+    # 访问白名单
     PATH_WHITE_LIST = [
         '/user/get_code/',
         '/user/check_code/',
     ]
 
     def process_request(self, request):
-        # 检查当前访问的路径是否在白名单中
+        # 检查请求路径是否在白名单中，如果在就跳过这个中间件
         if request.path in self.PATH_WHITE_LIST:
             return
-
-        uid = request.session.get('uid')  # 从 session 中取出 uid
+        # 获取uid
+        uid = request.session.get('uid')
+        # 如果没有uid就返回LoginRequired码
         if not uid:
-            # 检查 session 中是否已存在 uid
             return render_json('LoginRequired', code=status.LoginRequired)
-
         # 获取当前用户
         request.user = User.objects.get(id=uid)
