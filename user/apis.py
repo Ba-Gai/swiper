@@ -2,6 +2,7 @@
 # 因为需要的是json数据，所以不需上面的render，直接导入JsonResponse
 
 # from django.http import JsonResponse
+import os
 
 from django.core.cache import cache
 
@@ -10,6 +11,7 @@ from common import status
 from user import logics
 from libs.http import render_json
 from libs.orm import model_to_dict
+from libs.txcloud import upload_to_tx
 
 from user.models import User
 
@@ -86,6 +88,17 @@ def set_profile(request):
 
     return render_json()
 
+
 # 3. 上传个人头像接口
 def upload_avatar(request):
+    avatar_file = request.FILES['avatar']
+    # 上传到服务器，返回文件名称和路径
+    filename, filepath = logics.save_avatar(avatar_file, request.user.id)
+    # 图片上传到腾讯对象存储
+    avatar_url = upload_to_tx(filename, filepath)
+    # 删除本地文件
+    os.remove(filepath)
+    # 将文件保存到数据库
+    request.user.avatar = avatar_url
+    request.user.save()
     return render_json()

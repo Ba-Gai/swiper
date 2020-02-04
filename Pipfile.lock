@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8fb0520e148f79ca31c5e153ed201bead29d9c7beff88f39c6bcb3ae7c77ef1a"
+            "sha256": "ccde4284fc9e055e3590794b8f245af853f961a9c7ec09548b050172812214a1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -110,6 +110,15 @@
             "markers": "sys_platform == 'win32'",
             "version": "==0.4.3"
         },
+        "cos-python-sdk-v5": {
+            "hashes": [
+                "sha256:6f93037a049d7b71f78a1344c4d3b187e060cf744967d0f4467a8cba7d89375d",
+                "sha256:789305841a83cfbe2f0cffc2d000cc7b56125bfca32dc36caa130e794e7ac08c",
+                "sha256:d68b1b57bb39d085f0514b091a77eb18ac7d94b04a8d787d272012d455faca95"
+            ],
+            "index": "pypi",
+            "version": "==1.7.7"
+        },
         "decorator": {
             "hashes": [
                 "sha256:86156361c50488b84a3f148056ea716ca587df2f0de1d34750d35c21312725de",
@@ -117,6 +126,12 @@
             ],
             "index": "pypi",
             "version": "==4.4.0"
+        },
+        "dicttoxml": {
+            "hashes": [
+                "sha256:ea44cc4ec6c0f85098c57a431a1ee891b3549347b07b7414c8a24611ecf37e45"
+            ],
+            "version": "==1.7.4"
         },
         "django": {
             "hashes": [

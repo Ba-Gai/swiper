@@ -1,12 +1,16 @@
+import os
 import random
 import requests
 from django.core.cache import cache
 from swiper import config
 from common import keys
+from django.conf import settings
+
 
 # 生成指定长度的随机验证码
 def random_code(length=6):
     return "".join([str(random.randint(0, 9)) for i in range(length)])
+
 
 # 发送验证码
 def send_vcode(phonenum):
@@ -24,3 +28,15 @@ def send_vcode(phonenum):
     else:
         return False
 
+
+# 上传文件到服务器，并临时存放
+def save_avatar(upload_file, uid):
+    filename = 'Avatar-%s' % uid
+    filepath = os.path.join(settings.MEDIA_ROOT, filename)
+
+    with open(filepath, 'wb') as fp:
+        # chunk 将文件切分上传，减轻上传服务器压力
+        for chunk in upload_file.chunks():
+            fp.write(chunk)
+
+    return filename, filepath

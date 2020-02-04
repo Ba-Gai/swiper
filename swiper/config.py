@@ -29,3 +29,14 @@ QN_BUCKET = 'ding-01'
 QN_BASEURL = 'http://puvot7qe4.bkt.clouddn.com'
 QN_ACCESSKEY = 'FB3609sMvURurQr7s_j8oJPLUkv1RoZCE_QHjjTi'
 QN_SECRETKEY = 'WjV_aLvXXR48uCW22nfIIbCU76h7OQXnFJ4n9tFS'
+
+
+# 腾讯云对象存储配置
+secret_id = 'AKIDwf8LLPcn690QXQI37wVoqc8QSL3rRila'
+secret_key = 'klUxA4jzzjCSUGn58vSlnZ4i382gbIgo'
+Bucket = 'avatar-1259234619',
+PartSize = 1,
+MAXThread = 10,
+EnableMD5 = False
+BaseUrl = 'https://avatar-1259234619.cos.ap-chengdu.myqcloud.com'
+region = 'ap-chengdu'
