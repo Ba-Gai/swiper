@@ -33,8 +33,8 @@ QN_SECRETKEY = 'WjV_aLvXXR48uCW22nfIIbCU76h7OQXnFJ4n9tFS'
 
 # 腾讯云对象存储配置
 # id 和 key写你自己的
-secret_id = 'secret_id'
-secret_key = 'secret_id'
+secret_id = 'secret_id'  # secret_id
+secret_key = 'secret_key'  # secret_key
 Bucket = 'avatar-1259234619',
 PartSize = 1,
 MAXThread = 10,

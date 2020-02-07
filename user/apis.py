@@ -2,8 +2,6 @@
 # 因为需要的是json数据，所以不需上面的render，直接导入JsonResponse
 
 # from django.http import JsonResponse
-import os
-
 from django.core.cache import cache
 
 from common import keys
@@ -92,13 +90,8 @@ def set_profile(request):
 # 3. 上传个人头像接口
 def upload_avatar(request):
     avatar_file = request.FILES['avatar']
-    # 上传到服务器，返回文件名称和路径
-    filename, filepath = logics.save_avatar(avatar_file, request.user.id)
-    # 图片上传到腾讯对象存储
-    avatar_url = upload_to_tx(filename, filepath)
-    # 删除本地文件
-    os.remove(filepath)
-    # 将文件保存到数据库
-    request.user.avatar = avatar_url
-    request.user.save()
+    # 调用delay方法接收参数，实现celery异步
+    # 打开异步命令pipenv run celery worker -A worker --loglevel=info -P eventlet
+    # 需要安装eventlet，不然celery4.*不兼容
+    logics.upload_avatar.delay(request.user, avatar_file)
     return render_json()

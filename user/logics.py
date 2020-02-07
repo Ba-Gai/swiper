@@ -2,9 +2,12 @@ import os
 import random
 import requests
 from django.core.cache import cache
+
+from libs.txcloud import upload_to_tx
 from swiper import config
 from common import keys
 from django.conf import settings
+from worker import  celery_app
 
 
 # 生成指定长度的随机验证码
@@ -40,3 +43,15 @@ def save_avatar(upload_file, uid):
             fp.write(chunk)
 
     return filename, filepath
+
+@celery_app.task
+def upload_avatar(user, avatar_file):
+    # 上传到服务器，返回文件名称和路径
+    filename, filepath = save_avatar(avatar_file, user.id)
+    # 图片上传到腾讯对象存储
+    avatar_url = upload_to_tx(filename, filepath)
+    # 删除本地文件
+    os.remove(filepath)
+    # 将文件保存到数据库
+    user.avatar = avatar_url
+    user.save()

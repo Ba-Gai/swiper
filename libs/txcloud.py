@@ -3,7 +3,6 @@ from qcloud_cos import CosS3Client
 from qcloud_cos import CosServiceError
 from qcloud_cos import CosClientError
 from swiper import config
-import requests
 
 
 def upload_to_tx(filename, filepath):
