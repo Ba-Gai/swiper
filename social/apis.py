@@ -1,9 +1,13 @@
 from libs.http import render_json
+from social import logics
 
 
 # 推荐用户
 def rcmd_users(request):
-    return render_json()
+    # 拿到过滤用户列表
+    users = logics.rcmd(request.user)
+    result = [user.to_dict() for user in users ]
+    return render_json(result)
 
 
 # 喜欢的右滑
@@ -14,7 +18,6 @@ def like(request):
 # 超级喜欢上滑
 def superlike(request):
     return render_json()
-
 
 # 不喜欢左滑
 def dislike(request):
