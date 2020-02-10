@@ -24,7 +24,8 @@ def get_vcode(request):
     if logics.send_vcode(phonenum):
         return render_json()
     else:
-        return render_json(code=status.SMSErr, data='SMSErr')
+        raise status.SMSErr
+        # return render_json(code=status.SMSErr, data='SMSErr')
 
 
 # 检查验证码，并进行登录注册
@@ -35,7 +36,8 @@ def check_vcode(request):
     cached_vcode = cache.get(keys.VCODE_KEY % phonenum)
     # 判断验证码是否过期
     if cached_vcode is None:
-        return render_json(code=status.VcodeExpired, data='VcodeExpired')
+        raise status.VcodeExpired
+        # return render_json(code=status.VcodeExpired, data='VcodeExpired')
     # 检查验证码是否一致
     if cached_vcode == vcode:
         # 获取或创建对象
@@ -49,7 +51,8 @@ def check_vcode(request):
         # 将用户信息发送给前端
         return render_json(data=user.to_dict())
     else:
-        return render_json(code=status.VcodeErr, data='VcodeErr')
+        # return render_json(code=status.VcodeErr, data='VcodeErr')
+        raise status.VcodeErr
 
 
 # 1. 获取交友资料接口
@@ -70,7 +73,9 @@ def set_profile(request):
         user.__dict__.update(user_form.cleaned_data)
         user.save()
     else:
-        return render_json(data=user_form.errors, code=status.UserDataErr)
+        # 直接抛出实例，手动添加data
+        raise status.UserDataErr(user_form.errors)
+        # return render_json(data=user_form.errors, code=status.UserDataErr)
 
     profile_form = ProfileForm(request.POST)
     # profile = user.profile
@@ -82,7 +87,8 @@ def set_profile(request):
         profile.id = user.id
         profile.save()
     else:
-        return render_json(data=profile_form.errors, code=status.ProfileDataErr)
+        raise status.ProfileDataErr(profile_form.errors)
+        # return render_json(data=profile_form.errors, code=status.ProfileDataErr)
 
     return render_json()
 

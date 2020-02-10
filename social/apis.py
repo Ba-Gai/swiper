@@ -12,6 +12,8 @@ def rcmd_users(request):
 
 # 喜欢的右滑
 def like(request):
+    sid = int(request.POST.get('sid'))
+    logics.like_someone(request.user, sid)
     return render_json()
 
 

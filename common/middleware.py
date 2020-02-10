@@ -9,6 +9,7 @@ from libs.http import render_json
 
 def timer(func):
     '''时间检查装饰器'''
+
     def warp(*args, **kwargs):
         t1 = time.time()
         res = func(*args, **kwargs)
@@ -16,6 +17,7 @@ def timer(func):
         used = (t2 - t1) * 1000
         print('接口耗时: %0.2f ms' % used)
         return res
+
     return warp
 
 
@@ -34,6 +36,14 @@ class AuthMiddleware(MiddlewareMixin):
         uid = request.session.get('uid')
         # 如果没有uid就返回LoginRequired码
         if not uid:
-            return render_json('LoginRequired', code=status.LoginRequired)
+            # 通过抛错的形式只能在views函数里面使用，不能在中间件里面使用
+            return render_json('LoginRequired', code=status.LoginRequired.code)
         # 获取当前用户
         request.user = User.objects.get(id=uid)
+
+
+# 逻辑错误中间件
+class LogicErrorMiddleware(MiddlewareMixin):
+    def process_exception(self, request, exception):
+        if isinstance(exception, status.LogicError):
+            return render_json(data=exception.data, code=exception.code)
