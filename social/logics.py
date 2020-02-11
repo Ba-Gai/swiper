@@ -2,7 +2,7 @@ import datetime
 
 from social.models import Swiper
 from user.models import User, Profile
-from libs.http import render_json
+from social.models import Friend
 
 
 # 添加用户推荐，并且需要排除已经滑过的用户
@@ -18,7 +18,7 @@ def rcmd(user):
         location=user.profile.dating_location,
         birthday__lte=max_birthday,
         birthday__gte=min_birthday,
-    ).enclude(id__in=swipe_ids)[:20]  # 排除掉id在已经滑过id的用户，一次只拿20个用户
+    ).exclude(id__in=swipe_ids)[:20]  # 排除掉id在已经滑过id的用户，一次只拿20个用户
     return users
 
 
@@ -27,7 +27,8 @@ def like_someone(user, sid):
     # 添加滑动记录
     Swiper.swipe(user.id, sid, 'like')
     # 检查对方是否喜欢过自己，如果互相喜欢就配对成好友
-    if Swiper.is_like(uid=sid, sid=user.id):
+    if Swiper.is_like(sid, user.id):
+        Friend.make_friend(user.id, sid)
         return True
     else:
         return False
