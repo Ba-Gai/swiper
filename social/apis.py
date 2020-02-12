@@ -3,6 +3,9 @@ from social import logics
 
 
 # 推荐用户
+from social.models import Swiper
+
+
 def rcmd_users(request):
     # 拿到过滤用户列表
     users = logics.rcmd(request.user)
@@ -20,10 +23,16 @@ def like(request):
 
 # 超级喜欢上滑
 def superlike(request):
-    return render_json()
+    sid = int(request.POST.get('sid'))
+    # 是否匹配成好友
+    is_matched = logics.superlike_someone(request.user, sid)
+    return render_json({'is_matched':is_matched})
 
 # 不喜欢左滑
 def dislike(request):
+    sid = int(request.POST.get('sid'))
+    # 添加滑动记录
+    Swiper.swipe(request.user.id, sid, 'dislike')
     return render_json()
 
 

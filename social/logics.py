@@ -33,3 +33,14 @@ def like_someone(user, sid):
     else:
         return False
 
+
+# 喜欢某人
+def superlike_someone(user, sid):
+    # 添加滑动记录
+    Swiper.swipe(user.id, sid, 'superlike')
+    # 检查对方是否喜欢过自己，如果互相喜欢就配对成好友
+    if Swiper.is_like(sid, user.id):
+        Friend.make_friend(user.id, sid)
+        return True
+    else:
+        return False

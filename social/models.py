@@ -19,7 +19,9 @@ class Swiper(models.Model):
         # 执行一次滑动并记录
         if stype not in ['like', 'superlike', 'dislike']:
             raise status.SwipeTypeError
-        return cls.objects.get_or_create(uid=uid, sid=sid, stype=stype)
+        if cls.objects.filter(uid=uid, sid=sid).exists():
+            raise status.SwipeThisOneError
+        return cls.objects.create(uid=uid, sid=sid, stype=stype)
 
     # 检查是否喜欢过某人
     @classmethod

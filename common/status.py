@@ -33,3 +33,4 @@ LoginRequired = gen_login_err('LoginRequired', 1003)  # 需要用户登录
 UserDataErr = gen_login_err('UserDataErr', 1004)  # 用户信息错误
 ProfileDataErr = gen_login_err('ProfileDataErr', 1005)  # 交友个人资料信息错误
 SwipeTypeError = gen_login_err('SwipeTypeError', 1006)  # 滑动类型错误
+SwipeThisOneError = gen_login_err('SwipeThisOneError', 1007)  # 重复滑动某一个人
