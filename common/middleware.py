@@ -24,8 +24,8 @@ def timer(func):
 class AuthMiddleware(MiddlewareMixin):
     # 访问白名单
     PATH_WHITE_LIST = [
-        '/user/get_code/',
-        '/user/check_code/',
+        '/api/user/get_vcode',
+        '/api/user/check_vcode',
     ]
 
     def process_request(self, request):

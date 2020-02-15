@@ -34,3 +34,5 @@ UserDataErr = gen_login_err('UserDataErr', 1004)  # 用户信息错误
 ProfileDataErr = gen_login_err('ProfileDataErr', 1005)  # 交友个人资料信息错误
 SwipeTypeError = gen_login_err('SwipeTypeError', 1006)  # 滑动类型错误
 SwipeThisOneError = gen_login_err('SwipeThisOneError', 1007)  # 重复滑动某一个人
+RewindLimited = gen_login_err('RewindLimited', 1008)  # 反悔超过默认次数
+RewindTimeOut = gen_login_err('RewindTimeOut', 1009)  # 反悔超过默认时间

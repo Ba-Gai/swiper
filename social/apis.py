@@ -36,8 +36,12 @@ def dislike(request):
     return render_json()
 
 
+# 接口设计的一些原则：
+#      吝啬原则（参数或者返回值能少既少）；
+#      安全原则（客户端传来的任何东西都不可信，任何参数都需要检查，即使这个值在前端有检查）
 # 反悔
 def rewind(request):
+    logics.rewind_swipe(request.user)
     return render_json()
 
 

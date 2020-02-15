@@ -47,3 +47,14 @@ class Friend(models.Model):
         # 判断一下大小，方便操作
         uid1, uid2 = (uid1, uid2) if uid1< uid2 else (uid2, uid1)
         cls.objects.get_or_create(uid1=uid1, uid2=uid2)
+
+    # 检查是否是好友
+    @classmethod
+    def is_friend(cls, uid1, uid2):
+        uid1, uid2 = (uid1, uid2) if uid1 < uid2 else (uid2, uid1)
+        return cls.objects.filter(uid1, uid2).exists()
+
+    # 删除好友关系
+    @classmethod
+    def break_off(cls, uid1, uid2):
+        return cls.objects.filter(uid1=uid1, uid2=uid2).delete()

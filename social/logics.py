@@ -1,6 +1,9 @@
 import datetime
+from django.core.cache import cache
 
+from common import keys, status
 from social.models import Swiper
+from swiper import config
 from user.models import User, Profile
 from social.models import Friend
 
@@ -44,3 +47,32 @@ def superlike_someone(user, sid):
         return True
     else:
         return False
+
+
+# 反悔
+def rewind_swipe(user):
+    # 检查当天是否超过指定次数
+    key = keys.REMIND_KEY % user.id
+    # 取出当前剩余次数
+    remain_times = cache.get(key, config.DAILY_REMIND)
+    if remain_times <= 0:
+        raise status.RewindLimited
+    # 取出最后滑动记录
+    latest_swipe = Swiper.objects.filter(uid=user.id).latest('stime')
+    # 检查上一次滑动是否在5分钟之内
+    now = datetime.datetime.now()  # 当前时间
+    if (now - latest_swipe.stime).total_seconds() > config.REMIND_TIMEOUT:
+        raise status.RewindTimeOut
+    # 检查是否曾经匹配成好友，如果是撤销好友关系
+    if latest_swipe.stype in ['like', 'superlike']:
+        Friend.break_off(user.id, latest_swipe.sid)
+    # 删除滑动记录
+    latest_swipe.delete()
+    # 重新计算并记录剩余次数
+    # 下一个零点时间
+    next_zero = datetime.datetime(now.year, now.month, now.day) + datetime.timedelta(1)
+    # 到凌晨的剩余时间，total_seconds()获得秒数
+    expire_seconds = (next_zero - now).total_seconds()
+    # 重新写入缓存
+    remain_times -= 1
+    cache.set(key, remain_times, expire_seconds)
