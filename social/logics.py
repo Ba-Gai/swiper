@@ -76,3 +76,14 @@ def rewind_swipe(user):
     # 重新写入缓存
     remain_times -= 1
     cache.set(key, remain_times, expire_seconds)
+
+
+def liked_me(user):
+    like_stype = ['like', 'superlike']
+    # 好友id列表
+    friend_id_list = Friend.friend_ids(user.id)
+    # 喜欢我的id列表
+    liked_me_id_list = Swiper.objects.filter(sid=user.id, stype__in=like_stype).exclude(uid__in=friend_id_list).values_list('uid', flat=True)
+    # 拿到喜欢过我的用户id列表
+    users = User.objects.filter(id__in=liked_me_id_list)
+    return users

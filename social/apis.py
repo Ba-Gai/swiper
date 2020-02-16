@@ -1,15 +1,15 @@
 from libs.http import render_json
 from social import logics
 
-
 # 推荐用户
-from social.models import Swiper
+from social.models import Swiper, Friend
+from user.models import User
 
 
 def rcmd_users(request):
     # 拿到过滤用户列表
     users = logics.rcmd(request.user)
-    result = [user.to_dict() for user in users ]
+    result = [user.to_dict() for user in users]
     return render_json(result)
 
 
@@ -18,7 +18,7 @@ def like(request):
     sid = int(request.POST.get('sid'))
     # 是否匹配成好友
     is_matched = logics.like_someone(request.user, sid)
-    return render_json({'is_matched':is_matched})
+    return render_json({'is_matched': is_matched})
 
 
 # 超级喜欢上滑
@@ -26,7 +26,8 @@ def superlike(request):
     sid = int(request.POST.get('sid'))
     # 是否匹配成好友
     is_matched = logics.superlike_someone(request.user, sid)
-    return render_json({'is_matched':is_matched})
+    return render_json({'is_matched': is_matched})
+
 
 # 不喜欢左滑
 def dislike(request):
@@ -47,9 +48,16 @@ def rewind(request):
 
 # 查看喜欢过我的人
 def show_liked_me(request):
-    return render_json()
+    # 喜欢过我的用户
+    users = logics.liked_me(request.user)
+    # 获取这些用户的详细信息
+    result = [user.to_dict() for user in users]
+    return render_json(result)
 
 
 # 好友列表
 def friend_list(request):
-    return render_json()
+    friend_id_list = Friend.friend_ids(request.user.id)
+    users = User.objects.filter(id__in=friend_id_list)
+    result = [user.to_dict() for user in users]
+    return render_json(result)

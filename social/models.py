@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Q
+
 from common import status
 
 # 添加滑动信息model
@@ -47,6 +49,19 @@ class Friend(models.Model):
         # 判断一下大小，方便操作
         uid1, uid2 = (uid1, uid2) if uid1< uid2 else (uid2, uid1)
         cls.objects.get_or_create(uid1=uid1, uid2=uid2)
+
+    # 获取好友列表
+    @classmethod
+    def friend_ids(cls, uid):
+        # id 列表
+        friend_id_list = []
+        condition = Q(uid1=uid) | Q(uid2=uid)
+        for ids in cls.objects.filter(condition):
+            if ids.uid1 == uid:
+                friend_id_list.append(ids.uid2)
+            else:
+                friend_id_list.append(ids.uid1)
+        return friend_id_list
 
     # 检查是否是好友
     @classmethod
