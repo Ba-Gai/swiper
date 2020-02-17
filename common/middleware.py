@@ -1,11 +1,12 @@
 import time
-
+import logging
 from django.utils.deprecation import MiddlewareMixin
 
 from common import status
 from user.models import User
 from libs.http import render_json
 
+err_logger = logging.getLogger('err')
 
 def timer(func):
     '''时间检查装饰器'''
@@ -46,4 +47,5 @@ class AuthMiddleware(MiddlewareMixin):
 class LogicErrorMiddleware(MiddlewareMixin):
     def process_exception(self, request, exception):
         if isinstance(exception, status.LogicError):
+            err_logger.error('API %s CODE %s DATA %s' %(request.path, exception.code, exception.data))
             return render_json(data=exception.data, code=exception.code)

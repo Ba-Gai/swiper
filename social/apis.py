@@ -1,10 +1,11 @@
 from libs.http import render_json
 from social import logics
-
-# 推荐用户
 from social.models import Swiper, Friend
 from user.models import User
+import logging
 
+# 添加日志对象
+inf_logger = logging.getLogger('inf')
 
 def rcmd_users(request):
     # 拿到过滤用户列表
@@ -18,6 +19,8 @@ def like(request):
     sid = int(request.POST.get('sid'))
     # 是否匹配成好友
     is_matched = logics.like_someone(request.user, sid)
+    # 写入日志
+    inf_logger.info('%s like %s' %(request.user.id, sid))
     return render_json({'is_matched': is_matched})
 
 
@@ -26,6 +29,7 @@ def superlike(request):
     sid = int(request.POST.get('sid'))
     # 是否匹配成好友
     is_matched = logics.superlike_someone(request.user, sid)
+    inf_logger.info('%s superlike %s' % (request.user.id, sid))
     return render_json({'is_matched': is_matched})
 
 
@@ -34,6 +38,7 @@ def dislike(request):
     sid = int(request.POST.get('sid'))
     # 添加滑动记录
     Swiper.swipe(request.user.id, sid, 'dislike')
+    inf_logger.info('%s dislike %s' % (request.user.id, sid))
     return render_json()
 
 
