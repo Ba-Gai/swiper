@@ -5,6 +5,8 @@ from user.models import User
 import logging
 
 # 添加日志对象
+from vip.logics import need_perm
+
 inf_logger = logging.getLogger('inf')
 
 def rcmd_users(request):
@@ -25,6 +27,7 @@ def like(request):
 
 
 # 超级喜欢上滑
+@need_perm('superlike')
 def superlike(request):
     sid = int(request.POST.get('sid'))
     # 是否匹配成好友
@@ -46,12 +49,14 @@ def dislike(request):
 #      吝啬原则（参数或者返回值能少既少）；
 #      安全原则（客户端传来的任何东西都不可信，任何参数都需要检查，即使这个值在前端有检查）
 # 反悔
+@need_perm('rewind')
 def rewind(request):
     logics.rewind_swipe(request.user)
     return render_json()
 
 
 # 查看喜欢过我的人
+@need_perm('show_liked_me')
 def show_liked_me(request):
     # 喜欢过我的用户
     users = logics.liked_me(request.user)

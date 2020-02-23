@@ -7,6 +7,17 @@ class Vip(models.Model):
     level = models.IntegerField(verbose_name="vip等级")
     price = models.FloatField(verbose_name="vip价格")
 
+    # vip对应的权限
+    def perms(self):
+        perm_id_list = VipPermRelation.objects.filter(vip_id=self.id).values_list('perm_id', flat=True)
+        return Permission.objects.filter(id__in=perm_id_list)
+
+    # 检查是否有某种权限
+    def has_perm(self, perm_name):
+        for perm in self.perms():
+            if perm.name == perm_name:
+                return True
+        return False
 
 # 权限
 class Permission(models.Model):
