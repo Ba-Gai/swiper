@@ -58,8 +58,16 @@ def check_vcode(request):
 # 1. 获取交友资料接口
 def get_profile(request):
     # 自定义的中间件里面  request.user  <---->  User.objects.get(id=uid)
-    profile = request.user.profile
-    return render_json(model_to_dict(profile))
+    # 添加缓存键
+    key = keys.PROFILE_KEY % request.user.id
+    # 先从缓存里面拿数据
+    data = cache.get(key)
+    # 如果没有就去数据库里面获取，并存进数据库
+    if not data:
+        profile = request.user.profile
+        data = model_to_dict(profile)
+        cache.set(key, data)
+    return render_json(data)
 
 
 # 2. 修改个人、交友资料接口
