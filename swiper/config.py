@@ -41,3 +41,10 @@ region = 'ap-chengdu'
 DAILY_REMIND = 3
 # 只能反悔五分钟之内的操作
 REMIND_TIMEOUT = 5 * 60
+
+# redis配置
+REDIS = {
+    'host': '127.0.0.1',
+    'port': 6379,
+    'db': 1,
+}

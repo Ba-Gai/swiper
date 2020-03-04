@@ -8,9 +8,7 @@ from common import keys
 from common import status
 from user import logics
 from libs.http import render_json
-from libs.orm import model_to_dict
 from libs.txcloud import upload_to_tx
-
 from user.models import User
 
 from user.forms import UserForm, ProfileForm
@@ -32,6 +30,7 @@ def get_vcode(request):
 def check_vcode(request):
     phonenum = request.POST.get('phonenum')
     vcode = request.POST.get('vcode')
+    print(vcode)
     # 验证码时间较短，需要将验证码放进缓存里面再来验证
     cached_vcode = cache.get(keys.VCODE_KEY % phonenum)
     # 判断验证码是否过期
@@ -65,7 +64,7 @@ def get_profile(request):
     # 如果没有就去数据库里面获取，并存进数据库
     if not data:
         profile = request.user.profile
-        data = model_to_dict(profile)
+        data = profile.to_dict()
         cache.set(key, data)
     return render_json(data)
 
@@ -94,6 +93,11 @@ def set_profile(request):
         profile = profile_form.save(commit=False)
         profile.id = user.id
         profile.save()
+        # 缓存更新
+        key = keys.PROFILE_KEY % request.user.id
+        # 通过删除缓存达到更新目的，还有就是被动的过期
+        # cache.delete(key)
+        cache.set(key, profile.to_dict())
     else:
         raise status.ProfileDataErr(profile_form.errors)
         # return render_json(data=profile_form.errors, code=status.ProfileDataErr)

@@ -51,17 +51,17 @@ class User(models.Model):
         return self._vip
 
     # 返回json数据
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'phonenum': self.phonenum,
-            'nickname': self.nickname,
-            'sex': self.sex,
-            # date数据类型不能被json序列化,所以给强转成字符串
-            'birthday': str(self.birthday),
-            'avatar': self.avatar,
-            'location': self.location,
-        }
+    # def to_dict(self):
+    #     return {
+    #         'id': self.id,
+    #         'phonenum': self.phonenum,
+    #         'nickname': self.nickname,
+    #         'sex': self.sex,
+    #         # date数据类型不能被json序列化,所以给强转成字符串
+    #         'birthday': str(self.birthday),
+    #         'avatar': self.avatar,
+    #         'location': self.location,
+    #     }
 
 
 # 个人中心
