@@ -11,6 +11,7 @@ YZX_API = 'https://open.ucpaas.com/ol/sms/sendsms'
 #     'mobile': None,
 # }
 
+# 云之讯配置文件
 YZX_PARAMS = {
     'sid': 'd4ae2ed11b3658e3ecc70948c0851c6d',
     'token': '057aff6f139**********7aa6dec492e',
@@ -47,4 +48,11 @@ REDIS = {
     'host': '127.0.0.1',
     'port': 6379,
     'db': 1,
+}
+
+# 滑动积分配置
+SWIPE_SCORE = {
+    'like': 5,
+    'superlike': 7,
+    'dislike': -5,
 }

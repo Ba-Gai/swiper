@@ -6,6 +6,7 @@ from social.models import Swiper
 from swiper import config
 from user.models import User, Profile
 from social.models import Friend
+from libs.cache import rds
 
 
 # 添加用户推荐，并且需要排除已经滑过的用户
@@ -66,6 +67,9 @@ def rewind_swipe(user):
     # 检查是否曾经匹配成好友，如果是撤销好友关系
     if latest_swipe.stype in ['like', 'superlike']:
         Friend.break_off(user.id, latest_swipe.sid)
+    # 反悔后减去已添加的积分
+    score = -config.SWIPE_SCORE[latest_swipe]
+    rds.zincrby('HotRank', score, latest_swipe.sid)
     # 删除滑动记录
     latest_swipe.delete()
     # 重新计算并记录剩余次数
@@ -83,7 +87,24 @@ def liked_me(user):
     # 好友id列表
     friend_id_list = Friend.friend_ids(user.id)
     # 喜欢我的id列表
-    liked_me_id_list = Swiper.objects.filter(sid=user.id, stype__in=like_stype).exclude(uid__in=friend_id_list).values_list('uid', flat=True)
+    liked_me_id_list = Swiper.objects.filter(sid=user.id, stype__in=like_stype).exclude(
+        uid__in=friend_id_list).values_list('uid', flat=True)
     # 拿到喜欢过我的用户id列表
     users = User.objects.filter(id__in=liked_me_id_list)
     return users
+
+
+# 添加积分
+def add_score(view_func):
+    def wrapper(request, *args, **kwargs):
+        response = view_func(request, *args, **kwargs)
+        # 获取sid
+        sid = request.POST.get('sid')
+        # 获取函数名
+        stype = view_func.__name__
+        # 获取积分
+        score = config.SWIPE_SCORE[stype]
+        # 修改积分
+        rds.zincrby('HotRank', score, sid)
+        return response
+    return wrapper

@@ -17,6 +17,7 @@ def rcmd_users(request):
 
 
 # 喜欢的右滑
+@logics.add_score
 def like(request):
     sid = int(request.POST.get('sid'))
     # 是否匹配成好友
@@ -28,6 +29,7 @@ def like(request):
 
 # 超级喜欢上滑
 @need_perm('superlike')
+@logics.add_score
 def superlike(request):
     sid = int(request.POST.get('sid'))
     # 是否匹配成好友
@@ -37,6 +39,7 @@ def superlike(request):
 
 
 # 不喜欢左滑
+@logics.add_score
 def dislike(request):
     sid = int(request.POST.get('sid'))
     # 添加滑动记录
