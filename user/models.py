@@ -33,6 +33,9 @@ class User(models.Model):
     location = models.CharField(max_length=16, choices=LOCATION, verbose_name='常居地')
     vip_id = models.IntegerField(default=1, verbose_name="vip ID")
 
+    def __str__(self):
+        return f'{self.nickname}-{self.id}'
+
     # 返回个人资料(不使用外键关联的方式，完成user和profile一对一对应关系)
     @property  # @property将类里面的函数设置为属性，调用时可以不用加括号
     def profile(self):

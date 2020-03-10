@@ -74,3 +74,17 @@ def friend_list(request):
     users = User.objects.filter(id__in=friend_id_list)
     result = [user.to_dict() for user in users]
     return render_json(result)
+
+
+# 添加积分top榜
+def hot_rank(request):
+    """
+    热度排行榜输出格式如下：
+    rank_data = {
+        1: {nickname: xxx, sex: 'xx', age: 12, score: 300}
+        2: {nickname: xxx, sex: 'xx', age: 12, score: 200}
+        ...
+    }
+    """
+    rank_data = logics.get_top_n(30)
+    return render_json(rank_data)

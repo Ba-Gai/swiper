@@ -105,6 +105,30 @@ def add_score(view_func):
         # 获取积分
         score = config.SWIPE_SCORE[stype]
         # 修改积分
-        rds.zincrby('HotRank', score, sid)
+        rds.zincrby(keys.RANK_KEY, score, sid)
         return response
     return wrapper
+
+# 获取排名前N的用户范围
+def get_top_n(num):
+    # 取出并且清洗数据
+    origin_data = rds.zrevrange(keys.RANK_KEY, 0, num-1, withscores=True)
+    # 将取出的数据改成int类型
+    cleaned = [[int(uid), int(score)] for uid, score in origin_data]
+    # 取出每一个用户
+    user_list = [i[0] for i in cleaned]
+    users = User.objects.filter(id__in=user_list)
+    # 取出的数据是按照user的id升序排列的，需要重新定义sorted方法
+    users = sorted(users, key=lambda user : user_list.index(user.id))
+    rank_data = {}
+    # enumerate 可以返回users里面的index
+    for idx, user in enumerate(users):
+        # 返回user信息
+        user_info = user.to_dict()
+        # 计算排名
+        rank = idx + 1
+        # 添加积分，值是cleaned里对应排名的索引为1的
+        user_info['score'] = cleaned[idx][1]
+        # 添加rank，值是user_info
+        rank_data[rank] = user_info
+    return rank_data
