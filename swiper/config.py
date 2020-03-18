@@ -1,8 +1,6 @@
 # 程序逻辑配置，及第三方平台配置
 
 # 云之讯短信平台配置
-import os
-
 YZX_API = 'https://open.ucpaas.com/ol/sms/sendsms'
 # YZX_PARAMS = {
 #     'sid': os.environ.get("uid"),
@@ -12,6 +10,9 @@ YZX_API = 'https://open.ucpaas.com/ol/sms/sendsms'
 #     'param': None,
 #     'mobile': None,
 # }
+
+
+# 云之讯配置文件
 
 YZX_PARAMS = {
     'sid': 'd4ae2ed11b3658e3ecc70948c0851c6d',
@@ -31,6 +32,7 @@ QN_ACCESSKEY = 'FB3609sMvURurQr7s_j8oJPLUkv1RoZCE_QHjjTi'
 QN_SECRETKEY = 'WjV_aLvXXR48uCW22nfIIbCU76h7OQXnFJ4n9tFS'
 
 
+
 # 腾讯云对象存储配置
 # id 和 key写你自己的
 secret_id = 'secret_id'  # secret_id
@@ -41,3 +43,23 @@ MAXThread = 10,
 EnableMD5 = False
 BaseUrl = 'https://avatar-1259234619.cos.ap-chengdu.myqcloud.com'
 region = 'ap-chengdu'
+
+# 每日反悔次数
+DAILY_REMIND = 3
+# 只能反悔五分钟之内的操作
+REMIND_TIMEOUT = 5 * 60
+
+# redis配置
+REDIS = {
+    'host': '127.0.0.1',
+    'port': 6379,
+    'db': 1,
+}
+
+# 滑动积分配置
+SWIPE_SCORE = {
+    'like': 5,
+    'superlike': 7,
+    'dislike': -5,
+}
+

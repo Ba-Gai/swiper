@@ -8,9 +8,7 @@ from common import keys
 from common import status
 from user import logics
 from libs.http import render_json
-from libs.orm import model_to_dict
 from libs.txcloud import upload_to_tx
-
 from user.models import User
 
 from user.forms import UserForm, ProfileForm
@@ -24,18 +22,22 @@ def get_vcode(request):
     if logics.send_vcode(phonenum):
         return render_json()
     else:
-        return render_json(code=status.SMSErr, data='SMSErr')
+        raise status.SMSErr
+        # return render_json(code=status.SMSErr, data='SMSErr')
 
 
 # 检查验证码，并进行登录注册
 def check_vcode(request):
     phonenum = request.POST.get('phonenum')
     vcode = request.POST.get('vcode')
+    print(vcode)
+
     # 验证码时间较短，需要将验证码放进缓存里面再来验证
     cached_vcode = cache.get(keys.VCODE_KEY % phonenum)
     # 判断验证码是否过期
     if cached_vcode is None:
-        return render_json(code=status.VcodeExpired, data='VcodeExpired')
+        raise status.VcodeExpired
+        # return render_json(code=status.VcodeExpired, data='VcodeExpired')
     # 检查验证码是否一致
     if cached_vcode == vcode:
         # 获取或创建对象
@@ -49,14 +51,23 @@ def check_vcode(request):
         # 将用户信息发送给前端
         return render_json(data=user.to_dict())
     else:
-        return render_json(code=status.VcodeErr, data='VcodeErr')
+        # return render_json(code=status.VcodeErr, data='VcodeErr')
+        raise status.VcodeErr
 
 
 # 1. 获取交友资料接口
 def get_profile(request):
     # 自定义的中间件里面  request.user  <---->  User.objects.get(id=uid)
-    profile = request.user.profile
-    return render_json(model_to_dict(profile))
+    # 添加缓存键
+    key = keys.PROFILE_KEY % request.user.id
+    # 先从缓存里面拿数据
+    data = cache.get(key)
+    # 如果没有就去数据库里面获取，并存进数据库
+    if not data:
+        profile = request.user.profile
+        data = profile.to_dict()
+        cache.set(key, data)
+    return render_json(data)
 
 
 # 2. 修改个人、交友资料接口
@@ -70,7 +81,9 @@ def set_profile(request):
         user.__dict__.update(user_form.cleaned_data)
         user.save()
     else:
-        return render_json(data=user_form.errors, code=status.UserDataErr)
+        # 直接抛出实例，手动添加data
+        raise status.UserDataErr(user_form.errors)
+        # return render_json(data=user_form.errors, code=status.UserDataErr)
 
     profile_form = ProfileForm(request.POST)
     # profile = user.profile
@@ -81,8 +94,14 @@ def set_profile(request):
         profile = profile_form.save(commit=False)
         profile.id = user.id
         profile.save()
+        # 缓存更新
+        key = keys.PROFILE_KEY % request.user.id
+        # 通过删除缓存达到更新目的，还有就是被动的过期
+        # cache.delete(key)
+        cache.set(key, profile.to_dict())
     else:
-        return render_json(data=profile_form.errors, code=status.ProfileDataErr)
+        raise status.ProfileDataErr(profile_form.errors)
+        # return render_json(data=profile_form.errors, code=status.ProfileDataErr)
 
     return render_json()
 
