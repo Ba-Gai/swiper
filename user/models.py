@@ -5,12 +5,11 @@ from django.db import models
 
 # Create your models here.
 # 用户信息
-<<<<<<< HEAD
-=======
+
 from vip.models import Vip
 
 
->>>>>>> dev
+
 class User(models.Model):
     SEX = (
         ('male', '男性'),
@@ -34,13 +33,12 @@ class User(models.Model):
     birthday = models.DateField(default=datetime.date(1996, 5, 20), verbose_name='出生日')
     avatar = models.CharField(max_length=256, verbose_name='个人形象')
     location = models.CharField(max_length=16, choices=LOCATION, verbose_name='常居地')
-<<<<<<< HEAD
-=======
+
     vip_id = models.IntegerField(default=1, verbose_name="vip ID")
 
     def __str__(self):
         return f'{self.nickname}-{self.id}'
->>>>>>> dev
+
 
     # 返回个人资料(不使用外键关联的方式，完成user和profile一对一对应关系)
     @property  # @property将类里面的函数设置为属性，调用时可以不用加括号
@@ -52,20 +50,6 @@ class User(models.Model):
             self._profile, _ = Profile.objects.get_or_create(id=self.id)
         return self._profile
 
-<<<<<<< HEAD
-    # 返回json数据
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'phonenum': self.phonenum,
-            'nickname': self.nickname,
-            'sex': self.sex,
-            # date数据类型不能被json序列化,所以给强转成字符串
-            'birthday': str(self.birthday),
-            'avatar': self.avatar,
-            'location': self.location,
-        }
-=======
     # 返回用户对应的vip
     @property
     def vip(self):
@@ -85,7 +69,7 @@ class User(models.Model):
     #         'avatar': self.avatar,
     #         'location': self.location,
     #     }
->>>>>>> dev
+
 
 
 # 个人中心
