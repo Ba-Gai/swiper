@@ -2,7 +2,7 @@
 
 from multiprocessing import cpu_count
 
-bind = ["127.0.0.1:9000"]  # 线上环境不会开启在公网 IP 下，一般使用内网 IP
+bind = ["127.0.0.1:9000", "193.112.128.44:9000"]  # 线上环境不会开启在公网 IP 下，一般使用内网 IP
 daemon = True  # 是否开启守护进程模式
 pidfile = 'logs/gunicorn.pid'
 
