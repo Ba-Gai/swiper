@@ -122,7 +122,7 @@ CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
         # 缓存地址
-        "LOCATION": "redis://193.112.128.44:6379/12",
+        "LOCATION": "redis://127.0.0.1:6379/12",
         "OPTIONS": {
             'MAX_ENTRIES': 2000,
             # 使用线程池管理连接
@@ -133,7 +133,7 @@ CACHES = {
     'user': {
         'BACKEND': 'django_redis.cache.RedisCache',
         # 缓存地址
-        "LOCATION": "redis://193.112.128.44:6379/12",
+        "LOCATION": "redis://127.0.0.1:6379/12",
         "OPTIONS": {
             'MAX_ENTRIES': 2000,
             # 使用线程池管理连接
